@@ -62,6 +62,9 @@ import { ScheduleModule } from '@nestjs/schedule';
         // hashRounds: configService.get<number>('HASH_ROUNDS'),
         entities: [Movie, MovieDetail, Director, Genre, User, MovieUserLike],
         synchronize: configService.get<string>(envVariableKeys.env) === 'dev',
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
       inject: [ConfigService],
     }),
