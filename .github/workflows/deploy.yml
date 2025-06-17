@@ -42,12 +42,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          aws elasicbeanstalk create-application-version \
+          aws elasticbeanstalk create-application-version \
            --application-name "nestjs-netflix" \
            --version-label $GITHUB_SHA \
            --source-bundle S3Bucket="nestjs-basic-bucket",S3Key="deploy.zip" \
 
-          aws elasicbeanstalk update-environment \
+          aws elasticbeanstalk update-environment \
           --application-name "nestjs-netflix" \
           --environment-name "NestJS-Netflix-EB-env" \
           --version-label $GITHUB_SHA \
