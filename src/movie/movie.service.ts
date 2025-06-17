@@ -21,6 +21,9 @@ import { User } from 'src/user/entities/user.entity';
 import { MovieUserLike } from './entity/movie-user-like.entity';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
+import { envVariableKeys } from 'src/common/const/env.const';
+import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 export class MovieService {
   constructor(
@@ -40,6 +43,7 @@ export class MovieService {
     private readonly movieUserLikeRepository: Repository<MovieUserLike>,
 
     private readonly commonService: CommonService,
+    private readonly configService: ConfigService,
 
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
@@ -199,10 +203,19 @@ export class MovieService {
       .of(movieId)
       .add(genres.map((genre) => genre.id));
 
-    await rename(
-      join(process.cwd(), tempFolder, createMovieDto.movieFileName),
-      join(process.cwd(), movieFolder, createMovieDto.movieFileName),
-    );
+    if (this.configService.get(envVariableKeys.env) !== 'prod') {
+      await rename(
+        join(process.cwd(), tempFolder, createMovieDto.movieFileName),
+        join(process.cwd(), movieFolder, createMovieDto.movieFileName),
+      );
+    } else {
+      await this.commonService.saveMovieToPermanentStorage(
+        createMovieDto.movieFileName,
+      );
+      await qr.manager.update(Movie, movieId, {
+        movieFilePath: `public/movie/${createMovieDto.movieFileName}`,
+      });
+    }
 
     return await qr.manager.findOne(Movie, {
       where: { id: movieId },
