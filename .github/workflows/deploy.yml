@@ -43,11 +43,11 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           aws elasticbeanstalk create-application-version \
-           --application-name "nestjs-netflix" \
+           --application-name "NestJS-Netflix-EB" \
            --version-label $GITHUB_SHA \
            --source-bundle S3Bucket="nestjs-basic-bucket",S3Key="deploy.zip" \
 
           aws elasticbeanstalk update-environment \
-          --application-name "nestjs-netflix" \
+          --application-name "NestJS-Netflix-EB" \
           --environment-name "NestJS-Netflix-EB-env" \
           --version-label $GITHUB_SHA \
